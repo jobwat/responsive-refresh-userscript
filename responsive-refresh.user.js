@@ -43,7 +43,7 @@ function addJQuery(callback) {
 // the guts of this userscript
 function main() {
   // Note, jQ replaces $ to avoid conflicts.
-  console.log("There are " + jQ('a').length + " links on this page.");  
+  //console.log("There are " + jQ('a').length + " links on this page.");  
  
   var REGEXP=new RegExp('[&\?]?_device=([a-z]+)');
 
