@@ -64,7 +64,7 @@ function main() {
     //console.log('resizeD ', width);
       
     var device_should = guessDeviceFromWidth(width);
-    var device_is=window.location.href.match(REGEXP)[1];
+    var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
     if(device_should==device_is){ 
       //console.log('Width=' + width + 'px : Device is already ' + device_is);
     }
