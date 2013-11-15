@@ -3,8 +3,9 @@
 // @namespace   http://github.com/frontfoot
 // @version     0.1
 // @description Refresh
-// @match       http://localhost:3000/*
-// @match       http://*.wizardofodds.com.au/*
+// @include     http://localhost:3000/*
+// @include     http://*wizardofodds.com.au/*
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @copyright   2013+, Joseph Boiteau @ FrontFoot, MIT Licence
 // ==/UserScript==
 //
@@ -27,76 +28,55 @@
 // THE SOFTWARE.
 
 
+var REGEXP=new RegExp('[&\?]?_device=([a-z]+)');
 
-// a function that loads jQuery and calls a callback function when jQuery has finished loading
-// thx http://stackoverflow.com/questions/2246901/how-can-i-use-jquery-in-greasemonkey-scripts-in-google-chrome
-function addJQuery(callback) {
-  var script = document.createElement("script");
-  script.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js");
-  script.addEventListener('load', function() {
-    var script = document.createElement("script");
-    script.textContent = "window.jQ=jQuery.noConflict(true);(" + callback.toString() + ")();";
-    document.body.appendChild(script);
-  }, false);
-  document.body.appendChild(script);
+function guessDeviceFromWidth(width){
+  if ( width < 768 ){ return 'mobile'; }
+  else if( width < 1024 ){ return 'tablet'; }
+  else { return 'desktop'; }
 }
 
-// the guts of this userscript
-function main() {
-  // Note, jQ replaces $ to avoid conflicts.
-  //console.log("There are " + jQ('a').length + " links on this page.");  
- 
-  var REGEXP=new RegExp('[&\?]?_device=([a-z]+)');
+function newUrl(device){
+  var clean_url = window.location.href;
+  console.log('newUrl', window.location.href);
+  if ( window.location.href.match(REGEXP) ){ clean_url=window.location.href.replace(REGEXP,'') }
+  var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
+  return clean_url + delimiter + '_device=' + device;
+}
 
-  function guessDeviceFromWidth(width){
-    if ( width < 768 ){ return 'mobile'; }
-    else if( width < 1024 ){ return 'tablet'; }
-    else { return 'desktop'; }
-  }
-
-  function newUrl(device){
-    var clean_url = window.location.href;
-    if ( window.location.href.match(REGEXP) ){ clean_url=window.location.href.replace(REGEXP,'') }
-    var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
-    return clean_url + delimiter + '_device=' + device;
-  }
-
-  function resized(width){
-    //console.log('resizeD ', width);
-      
-    var device_should = guessDeviceFromWidth(width);
-    var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
-    if(device_should==device_is){ 
-      //console.log('Width=' + width + 'px : Device is already ' + device_is);
-    }
-    else{
-      console.log('Width=' + width + 'px : going', device_should);
-      window.location = newUrl(device_should);
-    }
-
-  }
+function resized(width){
+  //console.log('resizeD ', width);
     
-  var prevWidth = $(window).width();
-  var timeoutId = 0;
-  $(window).resize(function() {
-    var width = $(window).width();
-    if (prevWidth == width) {
-        console.log('same width', width, ', return'); // never occur..?
-		return;
-	}
+  var device_should = guessDeviceFromWidth(width);
+  console.log('resized', window.location.href);
+  var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
+  if(device_should==device_is){ 
+    console.log('Width=' + width + 'px : Device is already ' + device_is);
+  }
+  else{
+    var new_url = newUrl(device_should);
+    console.log('Width=' + width + 'px : going', device_should, new_url);
+    window.location.href = new_url;
+  }
+
+}
+  
+var prevWidth = $(window).width();
+var timeoutId = 0;
+$(window).resize(function() {
+  var width = $(window).width();
+  if (prevWidth == width) {
+    console.log('same width', width, ', return'); // never occur..?
+    return;
+  }
     //console.log('resize ', width);
     if (timeoutId !== 0) {
-	  clearTimeout(timeoutId);
-	}
-	timeoutId = setTimeout(function debounced() {
-		resized(width);
-		prevWidth = width;
-		timeoutId = 0;
-	}, 100);
-  });
-}
-
-
-// load jQuery and execute the main function
-addJQuery(main);
+    clearTimeout(timeoutId);
+  }
+  timeoutId = setTimeout(function debounced() {
+    resized(width);
+    prevWidth = width;
+    timeoutId = 0;
+  }, 100);
+});
 
