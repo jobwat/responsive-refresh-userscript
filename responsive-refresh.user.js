@@ -4,6 +4,7 @@
 // @version     0.1
 // @description Refresh
 // @match       http://localhost:3000/*
+// @match       http://*.wizardofodds.com.au/*
 // @copyright   2013+, Joseph Boiteau @ FrontFoot, MIT Licence
 // ==/UserScript==
 //
