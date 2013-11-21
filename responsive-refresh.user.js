@@ -15,10 +15,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,12 +45,10 @@ function newUrl(device){
 }
 
 function resized(width){
-  //console.log('resizeD ', width);
-    
   var device_should = guessDeviceFromWidth(width);
   console.log('resized', window.location.href);
   var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
-  if(device_should==device_is){ 
+  if(device_should==device_is){
     console.log('Width=' + width + 'px : Device is already ' + device_is);
   }
   else{
@@ -58,19 +56,40 @@ function resized(width){
     console.log('Width=' + width + 'px : going', device_should, new_url);
     window.location.href = new_url;
   }
-
 }
-  
+
+function is_on(){
+  return localStorage.getItem("responsive-refresh-active") == 'true';
+}
+
+function toggleActive(){
+  new_state = !is_on();
+  localStorage.setItem("responsive-refresh-active", new_state);
+  $('#auto_refresh')[0].checked = new_state;
+  if(new_state){ resized(width); }
+}
+
+function insertControlPanel(){
+  $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; background: white; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
+  $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: is_on() }));
+  $('#responsive_refresh').append($('<label for="auto_refresh">auto-refresh</label>'));
+  $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
+}
+
 var prevWidth = $(window).width();
+var width = prevWidth;
 var timeoutId = 0;
 $(window).resize(function() {
-  var width = $(window).width();
+  width = $(window).width();
   if (prevWidth == width) {
     console.log('same width', width, ', return'); // never occur..?
     return;
   }
-    //console.log('resize ', width);
-    if (timeoutId !== 0) {
+  if(!is_on()){
+    return;
+  }
+  //console.log('resize ', width);
+  if (timeoutId !== 0) {
     clearTimeout(timeoutId);
   }
   timeoutId = setTimeout(function debounced() {
@@ -79,4 +98,6 @@ $(window).resize(function() {
     timeoutId = 0;
   }, 100);
 });
+
+insertControlPanel();
 
