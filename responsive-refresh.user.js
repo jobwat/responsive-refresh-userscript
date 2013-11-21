@@ -45,30 +45,37 @@ function cleanUrl(url){
     return url;
 }
 
-function updateUrl(url){
+function updateUrl(url, dev){
+    var _device = dev || device();
     var clean_url = cleanUrl(url);
     var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
-    return clean_url + delimiter + '_device=' + device();
+    return clean_url + delimiter + '_device=' + _device;
 }
 
 function resized(){
     var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
     if(device()==device_is){ 
-        console.log('Width=' + width + 'px : Device is already ' + device_is);
+        //console.log('Width=' + width + 'px : Device is already ' + device_is);
         return false;
     }
     else{
-        console.log('Width=' + width + 'px : going', device());
+        //console.log('Width=' + width + 'px : going', device());
         window.location.href = updateUrl();
     }
+}
+
+function forceDevice(dev){
+    console.log('force ', dev)
+    toggleActive(false);
+    window.location.href = updateUrl(undefined, dev);
 }
 
 function active(){
     return localStorage.getItem("responsive-refresh-active") == 'true';
 }
 
-function toggleActive(){
-    new_state = !active();
+function toggleActive(state){
+    var new_state = (state==false) ? false : !active();
     localStorage.setItem("responsive-refresh-active", new_state);
     $('#auto_refresh')[0].checked = new_state;
 
@@ -83,6 +90,10 @@ function insertControlPanel(){
     $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: active() }));
     $('#responsive_refresh').append($('<label for="auto_refresh">auto-refresh</label>'));
     $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
+    $.each(['mobile', 'tablet', 'desktop'], function(i, dev){
+        $('#responsive_refresh').append($("<span style=\"margin-left: 5px;\" id=\"toggle_"+dev+"\" href=\"#\">"+dev+"</span>"));
+	    $("#toggle_"+dev).click(function(event){ console.log('click ', dev); forceDevice(dev);});
+    });
 }
 
 $(window).resize(function() {
