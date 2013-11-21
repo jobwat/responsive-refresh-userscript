@@ -29,74 +29,72 @@
 
 
 var REGEXP=new RegExp('[&\?]?_device=([a-z]+)');
-
-function guessDeviceFromWidth(width){
-  if ( width < 768 ){ return 'mobile'; }
-  else if( width < 1024 ){ return 'tablet'; }
-  else { return 'desktop'; }
-}
-
-function newUrl(device){
-  var clean_url = window.location.href;
-  console.log('newUrl', window.location.href);
-  if ( window.location.href.match(REGEXP) ){ clean_url=window.location.href.replace(REGEXP,'') }
-  var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
-  return clean_url + delimiter + '_device=' + device;
-}
-
-function resized(width){
-  var device_should = guessDeviceFromWidth(width);
-  console.log('resized', window.location.href);
-  var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
-  if(device_should==device_is){
-    console.log('Width=' + width + 'px : Device is already ' + device_is);
-  }
-  else{
-    var new_url = newUrl(device_should);
-    console.log('Width=' + width + 'px : going', device_should, new_url);
-    window.location.href = new_url;
-  }
-}
-
-function is_on(){
-  return localStorage.getItem("responsive-refresh-active") == 'true';
-}
-
-function toggleActive(){
-  new_state = !is_on();
-  localStorage.setItem("responsive-refresh-active", new_state);
-  $('#auto_refresh')[0].checked = new_state;
-  if(new_state){ resized(width); }
-}
-
-function insertControlPanel(){
-  $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; background: white; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
-  $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: is_on() }));
-  $('#responsive_refresh').append($('<label for="auto_refresh">auto-refresh</label>'));
-  $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
-}
-
 var prevWidth = $(window).width();
 var width = prevWidth;
 var timeoutId = 0;
+
+function device(){
+    if ( width < 768 ){ return 'mobile'; }
+    else if( width < 1024 ){ return 'tablet'; }
+    else { return 'desktop'; }
+}
+
+function newUrl(){
+    var clean_url = window.location.href;
+    console.log('newUrl', window.location.href);
+    if ( window.location.href.match(REGEXP) ){ clean_url=window.location.href.replace(REGEXP,'') }
+    var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
+    return clean_url + delimiter + '_device=' + device();
+}
+
+function resized(){
+    var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
+    if(device()==device_is){
+        console.log('Width=' + width + 'px : Device is already ' + device_is);
+    }
+    else{
+        var new_url = newUrl();
+        console.log('Width=' + width + 'px : going', device(), new_url);
+        window.location.href = new_url;
+    }
+}
+
+function active(){
+    return localStorage.getItem("responsive-refresh-active") == 'true';
+}
+
+function toggleActive(){
+    new_state = !active();
+    localStorage.setItem("responsive-refresh-active", new_state);
+    $('#auto_refresh')[0].checked = new_state;
+
+    // if toggled active, act as resized
+    if(new_state){ resized(); }
+}
+
+function insertControlPanel(){
+    $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; background: white; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
+    $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: active() }));
+    $('#responsive_refresh').append($('<label for="auto_refresh">auto-refresh</label>'));
+    $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
+}
+
 $(window).resize(function() {
-  width = $(window).width();
-  if (prevWidth == width) {
-    console.log('same width', width, ', return'); // never occur..?
-    return;
-  }
-  if(!is_on()){
-    return;
-  }
-  //console.log('resize ', width);
-  if (timeoutId !== 0) {
-    clearTimeout(timeoutId);
-  }
-  timeoutId = setTimeout(function debounced() {
-    resized(width);
-    prevWidth = width;
-    timeoutId = 0;
-  }, 100);
+    width = $(window).width();
+
+    // forget if size unchanged
+    if (prevWidth == width) { return; }
+
+    // forget if tool inactive
+    if(!active()){ return; }
+
+    // don't fire on every events, wait 100ms
+    if (timeoutId !== 0) { clearTimeout(timeoutId); }
+    timeoutId = setTimeout(function debounced() {
+        resized();
+        prevWidth = width;
+        timeoutId = 0;
+    }, 100);
 });
 
 insertControlPanel();
