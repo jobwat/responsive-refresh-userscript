@@ -15,10 +15,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,26 +36,30 @@ var timeoutId = 0;
 function device(){
     if ( width < 768 ){ return 'mobile'; }
     else if( width < 1024 ){ return 'tablet'; }
-    else { return 'desktop'; }
+   	else { return 'desktop'; }
 }
 
-function newUrl(){
-    var clean_url = window.location.href;
-    console.log('newUrl', window.location.href);
-    if ( window.location.href.match(REGEXP) ){ clean_url=window.location.href.replace(REGEXP,'') }
+function cleanUrl(url){
+    if(!url) url = window.location.href;
+    if ( url.match(REGEXP) ){ url=url.replace(REGEXP,''); }
+    return url;
+}
+
+function updateUrl(url){
+    var clean_url = cleanUrl(url);
     var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
     return clean_url + delimiter + '_device=' + device();
 }
 
 function resized(){
     var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
-    if(device()==device_is){
+    if(device()==device_is){ 
         console.log('Width=' + width + 'px : Device is already ' + device_is);
+        return false;
     }
     else{
-        var new_url = newUrl();
-        console.log('Width=' + width + 'px : going', device(), new_url);
-        window.location.href = new_url;
+        console.log('Width=' + width + 'px : going', device());
+        window.location.href = updateUrl();
     }
 }
 
@@ -68,8 +72,10 @@ function toggleActive(){
     localStorage.setItem("responsive-refresh-active", new_state);
     $('#auto_refresh')[0].checked = new_state;
 
-    // if toggled active, act as resized
+    // if toggled get active, act as resized
     if(new_state){ resized(); }
+    // re-update links to remove the _device
+    updateAllLinks();
 }
 
 function insertControlPanel(){
@@ -97,5 +103,16 @@ $(window).resize(function() {
     }, 100);
 });
 
+function updateAllLinks() {
+    var anchorElements = document.getElementsByTagName('a');
+    if(active()){
+        for (var i in anchorElements) anchorElements[i].href = updateUrl(anchorElements[i].href);
+    } else {
+        for (var i in anchorElements) anchorElements[i].href = cleanUrl(anchorElements[i].href);
+    }
+}
+
+if(active()){ resized(); }
 insertControlPanel();
+updateAllLinks();
 
