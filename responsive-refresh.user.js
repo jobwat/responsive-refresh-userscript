@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name        Responsive refresh
 // @namespace   http://github.com/frontfoot
-// @version     0.1
+// @version     1.0
+// @downloadURL https://raw.github.com/jobwat/responsive-refresh-userscript/master/responsive-refresh.user.js
 // @description Refresh
 // @include     http://localhost:3000/*
 // @include     http://*wizardofodds.com.au/*
@@ -86,12 +87,12 @@ function toggleActive(state){
 }
 
 function insertControlPanel(){
-    $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; background: white; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
+    $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; z-index: 9; background: white; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
     $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: active() }));
-    $('#responsive_refresh').append($('<label for="auto_refresh">auto-refresh</label>'));
+    $('#responsive_refresh').append($('<label style="cursor: pointer;" for="auto_refresh">auto-refresh</label>'));
     $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
     $.each(['mobile', 'tablet', 'desktop'], function(i, dev){
-        $('#responsive_refresh').append($("<span style=\"margin-left: 5px;\" id=\"toggle_"+dev+"\" href=\"#\">"+dev+"</span>"));
+        $('#responsive_refresh').append($("<span style=\"margin-left: 5px; cursor: pointer;\" id=\"toggle_"+dev+"\" href=\"#\">"+dev+"</span>"));
 	    $("#toggle_"+dev).click(function(event){ console.log('click ', dev); forceDevice(dev);});
     });
 }
