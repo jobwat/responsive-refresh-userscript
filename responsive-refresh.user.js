@@ -139,8 +139,9 @@ function updateAllLinks() {
         for (var i in anchorElements) anchorElements[i].href = cleanUrl(anchorElements[i].href);
     }
 }
-
-if(active()){ resized(); }
-insertControlPanel();
-updateAllLinks();
+if(document.title.match(/Wizard of Odds/)){
+  if(active()){ resized(); }
+  insertControlPanel();
+  updateAllLinks();
+}
 
