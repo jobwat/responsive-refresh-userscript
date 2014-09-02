@@ -6,6 +6,8 @@
 // @description Refresh
 // @include     http://localhost:3000/*
 // @include     http://*wizardofodds.com.au/*
+// @exclude     http://*/admin/*
+// @exclude     http://*/auth/*
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @copyright   2013+, Joseph Boiteau @ FrontFoot, MIT Licence
 // ==/UserScript==
