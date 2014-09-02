@@ -40,17 +40,33 @@ function device(){
    	else { return 'desktop'; }
 }
 
-function cleanUrl(url){
-    if(!url) url = window.location.href;
-    if ( url.match(REGEXP) ){ url=url.replace(REGEXP,''); }
-    return url;
+function getUrlVars(url)
+{
+    var vars = [], hash;
+    var hashes = url.slice(url.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
 }
 
 function updateUrl(url, dev){
+    if(!url) url = window.location.href;
     var _device = dev || device();
-    var clean_url = cleanUrl(url);
-    var delimiter = clean_url.match(/[?=]/) ? '&' : '?';
-    return clean_url + delimiter + '_device=' + _device;
+    var url_vars = getUrlVars(url);
+    url_vars['_device'] = _device
+    var params = '';
+    for (var i = 0; i < url_vars.length; i++)
+    {
+        params += (i==0) ? '?' : '&';
+        params += url_vars[i];
+        params += '=';
+        params += url_vars[url_vars[i]];
+    }
+    return url.slice(0, url.indexOf('?')) + params;
 }
 
 function resized(){
