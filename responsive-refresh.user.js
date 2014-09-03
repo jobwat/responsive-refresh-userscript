@@ -68,7 +68,8 @@ function updateUrl(url, dev){
         params += '=';
         params += url_vars[url_vars[i]];
     }
-    return url.slice(0, url.indexOf('?')) + params;
+    var base_url = url.indexOf('?') < 0 ? url : url.slice(0, url.indexOf('?'));
+    return base_url + params;
 }
 
 function resized(){
