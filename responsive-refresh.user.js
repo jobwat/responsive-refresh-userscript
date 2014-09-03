@@ -31,7 +31,6 @@
 // THE SOFTWARE.
 
 
-var REGEXP=new RegExp('[&\?]?_device=([a-z]+)');
 var prevWidth = $(window).width();
 var width = prevWidth;
 var timeoutId = 0;
@@ -72,7 +71,7 @@ function updateUrl(url, dev){
 }
 
 function resized(){
-    var device_is=(match=window.location.href.match(REGEXP))?match[1]:undefined;
+    var device_is=getUrlVars(window.location.href)['_device'];
     if(device()==device_is){ 
         //console.log('Width=' + width + 'px : Device is already ' + device_is);
         return false;
