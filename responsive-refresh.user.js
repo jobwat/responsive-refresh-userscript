@@ -41,7 +41,9 @@ function device(){
 
 function getUrlVars(url)
 {
+    if(!url) url = window.location.href;
     var vars = [], hash;
+    if(url.indexOf('?') < 0) return [];
     var hashes = url.slice(url.indexOf('?') + 1).split('&');
     for(var i = 0; i < hashes.length; i++)
     {
