@@ -58,7 +58,8 @@ function updateUrl(url, dev){
     if(!url) url = window.location.href;
     var _device = dev || device();
     var url_vars = getUrlVars(url);
-    url_vars['_device'] = _device
+    if(url_vars['_device'] == undefined) url_vars.push('_device');
+    url_vars['_device'] = _device;
     var params = '';
     for (var i = 0; i < url_vars.length; i++)
     {
