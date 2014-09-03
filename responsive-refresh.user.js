@@ -58,10 +58,15 @@ function getUrlVars(url)
 
 function updateUrl(url, dev){
     if(!url) url = window.location.href;
-    var _device = dev || device();
     var url_vars = getUrlVars(url);
-    if(url_vars['_device'] == undefined) url_vars.push('_device');
-    url_vars['_device'] = _device;
+    if(dev == ''){
+        url_vars.splice(url_vars.indexOf('_device'), 1);
+    }
+    else{
+        var _device = dev || device();
+        if(url_vars['_device'] == undefined) url_vars.push('_device');
+        url_vars['_device'] = _device;
+    }
     var params = '';
     for (var i = 0; i < url_vars.length; i++)
     {
@@ -141,7 +146,7 @@ function updateAllLinks() {
     if(active()){
         for (var i in anchorElements) anchorElements[i].href = updateUrl(anchorElements[i].href);
     } else {
-        for (var i in anchorElements) anchorElements[i].href = cleanUrl(anchorElements[i].href);
+        for (var i in anchorElements) anchorElements[i].href = updateUrl(anchorElements[i].href, '');
     }
 }
 if(document.title.match(/Wizard of Odds/)){
