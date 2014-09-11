@@ -57,14 +57,10 @@ function getUrlVars(url)
 function updateUrl(url, dev){
     if(!url) url = window.location.href;
     var url_vars = getUrlVars(url);
-    if(dev == ''){
-        url_vars.splice(url_vars.indexOf('_device'), 1);
-    }
-    else{
-        var _device = dev || device();
-        if(url_vars['_device'] == undefined) url_vars.push('_device');
-        url_vars['_device'] = _device;
-    }
+    if(dev == undefined) dev = device(); // if nothing passed, get current device()
+    if(url_vars['_device'] == undefined) url_vars.push('_device'); // if no _device param, add it
+    if(dev == '') url_vars.splice(url_vars.indexOf('_device'), 1); // if empty device param passed, remove _device param 
+    else url_vars['_device'] = dev; // else, set the device param value
     var params = '';
     for (var i = 0; i < url_vars.length; i++)
     {
