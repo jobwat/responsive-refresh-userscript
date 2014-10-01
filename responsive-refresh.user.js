@@ -5,7 +5,7 @@
 // @downloadURL https://raw.github.com/jobwat/responsive-refresh-userscript/master/responsive-refresh.user.js
 // @description Refresh
 // @include     http://localhost:3000/*
-// @include     http://*wizardofodds.com.au/*
+// @include     http://*.wizardofodds.*.com.au/*
 // @exclude     http://*/admin/*
 // @exclude     http://*/auth/*
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
