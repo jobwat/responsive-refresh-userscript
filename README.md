@@ -14,6 +14,10 @@ As chrome is slightly painful (they probably got good concerns), you can't insta
 
 The trick is too install the [Tampermonkey extension](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), and then load the script: https://github.com/jobwat/responsive-refresh-userscript/raw/master/responsive-refresh.user.js
 
+### TODO
+
+Innovate in a dynamic triggering mechanism to enable this userscript on some conditions only (url is not enough in dev mode..)
+
 ### Note
 
 I've started the same project as a [Chrome Extension](https://github.com/jobwat/refresh-on-resize-chrome-extension) first but couldn't get the viewport dimensions, only the window ones.
