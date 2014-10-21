@@ -58,6 +58,11 @@ function getUrlVars(url)
 
 function updateUrl(url, dev){
     if(!url) url = window.location.href;
+    if(url.indexOf('#') < 0) url_hash = ''
+    else {
+        url_hash = url.slice(url.indexOf('#')+1);
+        url = url.slice(0, url.indexOf('#'))
+    }
     var url_vars = getUrlVars(url);
     if(dev == undefined) dev = device(); // if nothing passed, get current device()
     if(url_vars['_device'] == undefined) url_vars.push('_device'); // if no _device param, add it
@@ -72,7 +77,7 @@ function updateUrl(url, dev){
         params += url_vars[url_vars[i]];
     }
     var base_url = url.indexOf('?') < 0 ? url : url.slice(0, url.indexOf('?'));
-    return base_url + params;
+    return base_url + params + ( url_hash.length > 0 ? '#'+url_hash : '' );
 }
 
 function resized(){
