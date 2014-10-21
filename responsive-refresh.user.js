@@ -114,9 +114,9 @@ function toggleActive(state){
 }
 
 function insertControlPanel(){
-    $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; z-index: 9; background: white; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
-    $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: active() }));
-    $('#responsive_refresh').append($('<label style="cursor: pointer;" for="auto_refresh">auto-refresh</label>'));
+    $(document.body).prepend('<div id="responsive_refresh" style="position: absolute; z-index: 9; background: #EEE; opacity: 0.7; font-size: 10px; line-height: 10px;"></div>');
+    $('#responsive_refresh').append($('<input />', { type: 'checkbox', id: 'auto_refresh', checked: active(), style: 'width: auto; height: auto; float: inherit; margin: 0 5px 0 0; -webkit-appearance: checkbox;' }));
+    $('#responsive_refresh').append($('<label>auto-refresh</label>', { for: 'auto_refresh', style: 'cursor: pointer;' }));
     $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
     $.each(['mobile', 'tablet', 'desktop'], function(i, dev){
         $('#responsive_refresh').append($("<span style=\"margin-left: 5px; cursor: pointer;\" id=\"toggle_"+dev+"\" href=\"#\">"+dev+"</span>"));
