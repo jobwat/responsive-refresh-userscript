@@ -120,7 +120,7 @@ function insertControlPanel(){
     $('#auto_refresh').click(function(event){event.stopPropagation(); toggleActive();});
     $.each(['mobile', 'tablet', 'desktop'], function(i, dev){
         $('#responsive_refresh').append($("<span style=\"margin-left: 5px; cursor: pointer;\" id=\"toggle_"+dev+"\" href=\"#\">"+dev+"</span>"));
-	    $("#toggle_"+dev).click(function(event){ console.log('click ', dev); forceDevice(dev);});
+	    $("#toggle_"+dev).click(function(event){ forceDevice(dev);});
     });
 }
 
